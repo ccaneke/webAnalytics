@@ -3,6 +3,7 @@ package webAnalyzer
 import (
 	"bufio"
 	"io"
+	"net/http"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -49,4 +50,62 @@ func GetHTMLVersion(r io.Reader) string {
 	}
 
 	return version
+}
+
+func GetPageInformation(r io.Reader) PageInformation {
+	doc, err := html.Parse(r)
+	if err != nil {
+		panic(err)
+	}
+
+	var page = PageInformation{}
+
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if (*n).Type == html.ElementNode && (*n).Data == "link" {
+			page.NumLinks += 1
+		}
+
+		if (*n).Type == html.ElementNode && (*n).Data == "a" {
+			page.NumAnchors += 1
+
+			url := (*n).Attr[0].Val
+			_, err := http.Get(url)
+
+			if err != nil {
+				page.NumInaccessibleLinks += 1
+			}
+		}
+
+		if (*n).Type == html.ElementNode && (*n).Data == "h1" {
+			page.NumH1 += 1
+		}
+
+		if (*n).Type == html.ElementNode && (*n).Data == "h2" {
+			page.NumH2 += 1
+		}
+
+		if (*n).Type == html.ElementNode && (*n).Data == "h3" {
+			page.NumH3 += 1
+		}
+
+		if (*n).Type == html.ElementNode && (*n).Data == "h4" {
+			page.NumH4 += 1
+		}
+
+		if Contains(n) {
+			page.LoginForm = true
+		}
+
+		if (*n).Parent.Type == html.ElementNode && (*n).Parent.Data == "title" && (*n).Type == html.TextNode {
+			page.PageTitle = (*n).Data
+		}
+
+		for c := (*n).FirstChild; c != nil; c = (*c).NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+
+	return page
 }
