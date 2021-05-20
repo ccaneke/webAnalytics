@@ -18,7 +18,7 @@ func main() {
 
 	defer resp.Body.Close()
 
-	var pageInformation webAnalyzer.PageInformation = webAnalyzer.GetPageInformation(resp.Body)
+	pageInformation, err := webAnalyzer.GetPageInformation(resp.Body)
 
 	fmt.Println(pageInformation)
 }

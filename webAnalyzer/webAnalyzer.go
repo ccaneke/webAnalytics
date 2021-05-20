@@ -2,6 +2,7 @@ package webAnalyzer
 
 import (
 	"bufio"
+	"bytes"
 	"io"
 	"net/http"
 	"strings"
@@ -46,7 +47,7 @@ func GetHTMLVersion(r io.Reader) string {
 		line = scanner.Text()
 	}
 
-	if strings.Contains(line, "!DOCTYPE html") {
+	if !strings.Contains(strings.ToLower(line), "public") {
 		version = "HTML5"
 	} else {
 		version = "HTML4"
@@ -56,13 +57,17 @@ func GetHTMLVersion(r io.Reader) string {
 }
 
 // GetPageInformation gets information about the contents of a web page
-func GetPageInformation(r io.Reader) PageInformation {
-	doc, err := html.Parse(r)
+func GetPageInformation(r io.Reader) (PageInformation, error) {
+	b, err := io.ReadAll(r)
+	var page = PageInformation{}
 	if err != nil {
-		panic(err)
+		return page, err
 	}
 
-	var page = PageInformation{}
+	doc, err := html.Parse(bytes.NewReader(b))
+	if err != nil {
+		return page, err
+	}
 
 	var f func(*html.Node)
 	f = func(n *html.Node) {
@@ -101,7 +106,7 @@ func GetPageInformation(r io.Reader) PageInformation {
 			page.LoginForm = true
 		}
 
-		if (*n).Parent.Type == html.ElementNode && (*n).Parent.Data == "title" && (*n).Type == html.TextNode {
+		if (*n).Parent != nil && (*n).Parent.Type == html.ElementNode && (*n).Parent.Data == "title" && (*n).Type == html.TextNode {
 			page.PageTitle = (*n).Data
 		}
 
@@ -111,5 +116,7 @@ func GetPageInformation(r io.Reader) PageInformation {
 	}
 	f(doc)
 
-	return page
+	page.HtmlVersion = GetHTMLVersion(bytes.NewReader(b))
+
+	return page, nil
 }
