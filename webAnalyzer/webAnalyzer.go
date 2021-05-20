@@ -8,7 +8,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-type WebPageContent struct {
+type PageInformation struct {
 	HtmlVersion          string
 	PageTitle            string
 	NumH1                int
