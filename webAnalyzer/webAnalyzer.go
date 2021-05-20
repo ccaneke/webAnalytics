@@ -1,6 +1,8 @@
 package webAnalyzer
 
 import (
+	"bufio"
+	"io"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -29,4 +31,22 @@ func Contains(n *html.Node) bool {
 
 	}
 	return false
+}
+
+func GetHTMLVersion(r io.Reader) string {
+	var version string
+	var scanner = bufio.NewScanner(r)
+	var line string
+
+	for i := 0; scanner.Scan() && i < 1; i++ {
+		line = scanner.Text()
+	}
+
+	if strings.Contains(line, "!DOCTYPE html") {
+		version = "HTML5"
+	} else {
+		version = "HTML4"
+	}
+
+	return version
 }
