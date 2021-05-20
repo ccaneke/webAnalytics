@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/html"
 )
 
+// A PageInformation consists of information about a web page
 type PageInformation struct {
 	HtmlVersion          string
 	PageTitle            string
@@ -22,6 +23,7 @@ type PageInformation struct {
 	LoginForm            bool
 }
 
+// Contains verifies that a web page contains a login form
 func Contains(n *html.Node) bool {
 	var s []html.Attribute = n.Attr
 
@@ -34,6 +36,7 @@ func Contains(n *html.Node) bool {
 	return false
 }
 
+// GetHTMLVersion gets the HTML version of a web page
 func GetHTMLVersion(r io.Reader) string {
 	var version string
 	var scanner = bufio.NewScanner(r)
@@ -52,6 +55,7 @@ func GetHTMLVersion(r io.Reader) string {
 	return version
 }
 
+// GetPageInformation gets information about the contents of a web page
 func GetPageInformation(r io.Reader) PageInformation {
 	doc, err := html.Parse(r)
 	if err != nil {
