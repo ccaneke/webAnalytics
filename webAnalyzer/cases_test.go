@@ -1,16 +1,5 @@
 package webAnalyzer
 
-type Want struct {
-	NumAnchors      int
-	NumH1           int
-	NumH2           int
-	NumH3           int
-	NumH4           int
-	PageTitle       string
-	NumInaccessible int
-	HTMLVersion     string
-}
-
 var testCases = []struct {
 	in   string
 	want PageInformation
