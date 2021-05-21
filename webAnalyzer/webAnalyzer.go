@@ -29,7 +29,7 @@ func Contains(n *html.Node) bool {
 	var s []html.Attribute = n.Attr
 
 	for _, v := range s {
-		if v.Key == "input" && strings.ToLower(v.Val) == "password" {
+		if v.Key == "type" && strings.ToLower(v.Val) == "password" {
 			return true
 		}
 
