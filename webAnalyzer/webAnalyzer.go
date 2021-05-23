@@ -71,8 +71,8 @@ func GetPageInformation(r io.Reader) (PageInformation, error) {
 
 	var f func(*html.Node)
 	f = func(n *html.Node) {
-		if (*n).Type == html.ElementNode {
-			switch (*n).Data {
+		if n.Type == html.ElementNode {
+			switch n.Data {
 			case "link":
 				page.NumLinks++
 			case "a":
@@ -99,11 +99,11 @@ func GetPageInformation(r io.Reader) (PageInformation, error) {
 			page.LoginForm = true
 		}
 
-		if (*n).Parent != nil && (*n).Parent.Type == html.ElementNode && (*n).Parent.Data == "title" && (*n).Type == html.TextNode {
-			page.PageTitle = (*n).Data
+		if n.Parent != nil && n.Parent.Type == html.ElementNode && n.Parent.Data == "title" && n.Type == html.TextNode {
+			page.PageTitle = n.Data
 		}
 
-		for c := (*n).FirstChild; c != nil; c = (*c).NextSibling {
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
 			f(c)
 		}
 	}
