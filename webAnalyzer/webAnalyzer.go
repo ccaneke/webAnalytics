@@ -19,6 +19,8 @@ type PageInformation struct {
 	NumH2                int
 	NumH3                int
 	NumH4                int
+	NumH5                int
+	NumH6                int
 	NumAnchors           int
 	NumLinks             int
 	NumInaccessibleLinks int
@@ -93,6 +95,10 @@ func GetPageInformation(r io.Reader) (PageInformation, error) {
 				page.NumH3++
 			case "h4":
 				page.NumH4++
+			case "h5":
+				page.NumH5++
+			case "h6":
+				page.NumH6++
 			}
 		}
 
