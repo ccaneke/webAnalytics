@@ -71,35 +71,28 @@ func GetPageInformation(r io.Reader) (PageInformation, error) {
 
 	var f func(*html.Node)
 	f = func(n *html.Node) {
-		if (*n).Type == html.ElementNode && (*n).Data == "link" {
-			page.NumLinks += 1
-		}
+		if (*n).Type == html.ElementNode {
+			switch (*n).Data {
+			case "link":
+				page.NumLinks++
+			case "a":
+				page.NumAnchors++
 
-		if (*n).Type == html.ElementNode && (*n).Data == "a" {
-			page.NumAnchors += 1
+				url := (*n).Attr[0].Val
+				_, err := http.Get(url)
 
-			url := (*n).Attr[0].Val
-			_, err := http.Get(url)
-
-			if err != nil {
-				page.NumInaccessibleLinks += 1
+				if err != nil {
+					page.NumInaccessibleLinks++
+				}
+			case "h1":
+				page.NumH1++
+			case "h2":
+				page.NumH2++
+			case "h3":
+				page.NumH3++
+			case "h4":
+				page.NumH4++
 			}
-		}
-
-		if (*n).Type == html.ElementNode && (*n).Data == "h1" {
-			page.NumH1 += 1
-		}
-
-		if (*n).Type == html.ElementNode && (*n).Data == "h2" {
-			page.NumH2 += 1
-		}
-
-		if (*n).Type == html.ElementNode && (*n).Data == "h3" {
-			page.NumH3 += 1
-		}
-
-		if (*n).Type == html.ElementNode && (*n).Data == "h4" {
-			page.NumH4 += 1
 		}
 
 		if Contains(n) {
