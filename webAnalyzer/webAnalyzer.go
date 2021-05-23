@@ -1,3 +1,4 @@
+// Package webAnalyzer provides information about the content of a web page.
 package webAnalyzer
 
 import (
